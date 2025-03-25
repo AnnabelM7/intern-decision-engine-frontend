@@ -27,13 +27,14 @@ class _LoanFormState extends State<LoanForm> {
   int _loanAmountResult = 0;
   int _loanPeriodResult = 0;
   String _errorMessage = '';
+  String _selectedCountry = 'EE';
 
   // Submit the form and update the state with the loan decision results.
   // Only submits if the form inputs are validated.
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final result = await _apiService.requestLoanDecision(
-          _nationalId, _loanAmount, _loanPeriod);
+          _nationalId, _loanAmount, _loanPeriod, _selectedCountry);
       setState(() {
         int tempAmount = int.parse(result['loanAmount'].toString());
         int tempPeriod = int.parse(result['loanPeriod'].toString());
@@ -88,7 +89,26 @@ class _LoanFormState extends State<LoanForm> {
                       );
                     },
                   ),
+                  const SizedBox(height: 60.0)
+                  // Dropdown for selecting country
+                  DropdownButton<String>(
+                    value: _selectedCountry,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedCountry = newValue!;
+                        _submitForm();
+                      });
+                    },
+                    items: <String>['EE', 'LT', 'LV']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
                   const SizedBox(height: 60.0),
+
                   Text('Loan Amount: $_loanAmount €'),
                   const SizedBox(height: 8),
                   Slider.adaptive(
@@ -133,7 +153,7 @@ class _LoanFormState extends State<LoanForm> {
                   Slider.adaptive(
                     value: _loanPeriod.toDouble(),
                     min: 12,
-                    max: 60,
+                    max: 48,
                     divisions: 40,
                     label: '$_loanPeriod months',
                     activeColor: AppColors.secondaryColor,

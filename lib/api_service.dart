@@ -16,7 +16,14 @@ class ApiService {
   // requestLoanDecision sends a request to the API to get a loan decision
   // based on the provided personalCode, loanAmount, and loanPeriod.
   Future<Map<String, String>> requestLoanDecision(
-      String personalCode, int loanAmount, int loanPeriod) async {
+      String personalCode, int loanAmount, int loanPeriod, String countryCode) async {
+
+    print('Sending request with:');
+    print('personalCode: $personalCode');
+    print('loanAmount: $loanAmount');
+    print('loanPeriod: $loanPeriod');
+    print('countryCode: $countryCode');
+
     final response = await httpClient.post(
       Uri.parse('$_baseUrl/loan/decision'),
       headers: {'Content-Type': 'application/json'},
@@ -24,6 +31,7 @@ class ApiService {
         'personalCode': personalCode,
         'loanAmount': loanAmount,
         'loanPeriod': loanPeriod,
+        'countryCode': countryCode,
       }),
     );
 
@@ -33,7 +41,7 @@ class ApiService {
       responseAmount = responseData['loanAmount'].toString();
       responsePeriod = responseData['loanPeriod'].toString();
       responseError = responseData['errorMessage'].toString();
-
+      print('Response data: $responseData');
       // Return the response data as a map, handling null values if necessary
       return {
         'loanAmount': responseAmount != 'null' ? responseAmount : '0',
@@ -46,7 +54,7 @@ class ApiService {
       return {
         'loanAmount': '0',
         'loanPeriod': '0',
-        'errorMessage': 'An unexpected error occurred.',
+        'errorMessage': 'Failed to fetch data. Status code: ${response.statusCode}',
       };
     }
   }

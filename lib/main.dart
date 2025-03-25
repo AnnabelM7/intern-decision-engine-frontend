@@ -20,8 +20,8 @@ class InBankForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final bodyHeight = screenHeight / 1.5;
-    const minHeight = 500.0;
+    final bodyHeight = screenHeight / 1.2;
+    const minHeight = 650.0;
     final showText = bodyHeight > minHeight;
     return MaterialApp(
       title: 'Loan Application',
